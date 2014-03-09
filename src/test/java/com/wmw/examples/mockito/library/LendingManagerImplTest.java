@@ -3,7 +3,6 @@ package com.wmw.examples.mockito.library;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -46,8 +45,7 @@ public class LendingManagerImplTest {
 
   @Test(expected = IllegalStateException.class)
   public void unreturnedBookCanNotBeBorrowed() {
-    when(dao.findByBook(book)).thenReturn(
-        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord, newRecord)));
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(oldRecord, newRecord));
     manager.borrowBook(book);
   }
 
@@ -59,31 +57,27 @@ public class LendingManagerImplTest {
 
   @Test
   public void testReturnBook() {
-    when(dao.findByBook(book)).thenReturn(
-        new ArrayList<LibraryRecord>(Arrays.asList(newRecord)));
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(newRecord));
     manager.returnBook(book);
   }
 
   @Test(expected = IllegalStateException.class)
   public void unborrowedBookCanNotBeReturned() {
-    when(dao.findByBook(book)).thenReturn(
-        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord, newRecord)));
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(oldRecord, newRecord));
     when(newRecord.getReturningDate()).thenReturn(new Date());
     manager.returnBook(book);
   }
 
   @Test(expected = IllegalStateException.class)
   public void emptyBorrowingDateIsNotAllowed() {
-    when(dao.findByBook(book)).thenReturn(
-        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord)));
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(oldRecord));
     when(oldRecord.getBorrowingDate()).thenReturn(null);
     manager.borrowBook(book);
   }
 
   @Test(expected = IllegalStateException.class)
   public void moreThan1UnreturnedRecordIsNotAllowed() {
-    when(dao.findByBook(book)).thenReturn(
-        new ArrayList<LibraryRecord>(Arrays.asList(newRecord, newRecord)));
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(newRecord, newRecord));
     manager.returnBook(book);
   }
 
