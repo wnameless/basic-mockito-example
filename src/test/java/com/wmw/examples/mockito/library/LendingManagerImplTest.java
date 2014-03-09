@@ -1,6 +1,8 @@
 package com.wmw.examples.mockito.library;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -41,6 +43,8 @@ public class LendingManagerImplTest {
   @Test
   public void testBorrowBook() {
     manager.borrowBook(book);
+    verify(dao, times(1)).findByBook(book);
+    verify(dao, times(1)).save(any(LibraryRecord.class));
   }
 
   @Test(expected = IllegalStateException.class)
@@ -59,6 +63,8 @@ public class LendingManagerImplTest {
   public void testReturnBook() {
     when(dao.findByBook(book)).thenReturn(Arrays.asList(newRecord));
     manager.returnBook(book);
+    verify(dao, times(1)).findByBook(book);
+    verify(dao, times(1)).save(any(LibraryRecord.class));
   }
 
   @Test(expected = IllegalStateException.class)
