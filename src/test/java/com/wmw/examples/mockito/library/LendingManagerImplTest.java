@@ -3,6 +3,10 @@ package com.wmw.examples.mockito.library;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -20,15 +24,67 @@ public class LendingManagerImplTest {
   @Mock
   Book book;
 
+  @Mock
+  LibraryRecord oldRecord;
+
+  @Mock
+  LibraryRecord newRecord;
+
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+    when(oldRecord.getBorrowingDate()).thenReturn(new Date());
+    when(oldRecord.getReturningDate()).thenReturn(new Date());
+    when(newRecord.getBorrowingDate()).thenReturn(new Date());
+    when(dao.save(any(LibraryRecord.class))).thenReturn(true);
   }
 
   @Test
   public void testBorrowBook() {
-    when(dao.save(any(LibraryRecord.class))).thenReturn(true);
     manager.borrowBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void unreturnedBookCanNotBeBorrowed() {
+    when(dao.findByBook(book)).thenReturn(
+        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord, newRecord)));
+    manager.borrowBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void bookCanNotBeBorrowedIfRecordUnsaved() {
+    when(dao.save(any(LibraryRecord.class))).thenReturn(false);
+    manager.borrowBook(book);
+  }
+
+  @Test
+  public void testReturnBook() {
+    when(dao.findByBook(book)).thenReturn(
+        new ArrayList<LibraryRecord>(Arrays.asList(newRecord)));
+    manager.returnBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void unborrowedBookCanNotBeReturned() {
+    when(dao.findByBook(book)).thenReturn(
+        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord, newRecord)));
+    when(newRecord.getReturningDate()).thenReturn(new Date());
+    manager.returnBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void emptyBorrowingDateIsNotAllowed() {
+    when(dao.findByBook(book)).thenReturn(
+        new ArrayList<LibraryRecord>(Arrays.asList(oldRecord)));
+    when(oldRecord.getBorrowingDate()).thenReturn(null);
+    manager.borrowBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void moreThan1UnreturnedRecordIsNotAllowed() {
+    when(dao.findByBook(book)).thenReturn(
+        new ArrayList<LibraryRecord>(Arrays.asList(newRecord, newRecord)));
+    manager.returnBook(book);
   }
 
 }
