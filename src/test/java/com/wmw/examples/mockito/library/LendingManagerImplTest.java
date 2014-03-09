@@ -1,5 +1,9 @@
 package com.wmw.examples.mockito.library;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,6 +14,7 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -45,6 +50,16 @@ public class LendingManagerImplTest {
     manager.borrowBook(book);
     verify(dao, times(1)).findByBook(book);
     verify(dao, times(1)).save(any(LibraryRecord.class));
+    // Capture the argument of LibraryRecordDAO#save
+    ArgumentCaptor<LibraryRecord> captor =
+        ArgumentCaptor.forClass(LibraryRecord.class);
+    verify(dao).save(captor.capture());
+    LibraryRecord record = captor.getValue();
+    assertSame(book, record.getBook());
+    assertTrue(new Date().getTime() - record.getBorrowingDate().getTime() >= 0L);
+    assertTrue(new Date().getTime() - record.getBorrowingDate().getTime() < 5L);
+    assertNull(record.getReturningDate());
+    assertEquals(0, record.getId());
   }
 
   @Test(expected = IllegalStateException.class)
