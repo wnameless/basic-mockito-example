@@ -10,6 +10,10 @@ public class LendingManagerImpl implements LendingManager {
   @Inject
   LibraryRecordDAO libraryRecordDAO;
 
+  public void setLibraryRecordDAO(LibraryRecordDAO dao) {
+    libraryRecordDAO = dao;
+  }
+
   @Override
   public LibraryRecord borrowBook(Book book) {
     List<LibraryRecord> records =
