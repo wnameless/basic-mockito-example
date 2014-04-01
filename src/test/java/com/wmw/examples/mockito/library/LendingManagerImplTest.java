@@ -20,7 +20,6 @@
  */
 package com.wmw.examples.mockito.library;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -79,7 +78,7 @@ public class LendingManagerImplTest {
     assertTrue(new Date().getTime() - record.getBorrowingDate().getTime() >= 0L);
     assertTrue(new Date().getTime() - record.getBorrowingDate().getTime() < 5L);
     assertNull(record.getReturningDate());
-    assertEquals(0, record.getId());
+    assertNull(record.getId());
   }
 
   @Test(expected = IllegalStateException.class)
