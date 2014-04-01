@@ -59,7 +59,9 @@ public class LendingManagerImpl implements LendingManager {
     for (LibraryRecord record : records) {
       if (record.getReturningDate() == null) {
         record.setReturningDate(new Date());
-        libraryRecordDAO.save(record);
+        if (!libraryRecordDAO.save(record))
+          throw new IllegalStateException("Library record can't be updated.");
+
         return record;
       }
     }
@@ -71,6 +73,7 @@ public class LendingManagerImpl implements LendingManager {
     for (LibraryRecord record : records) {
       if (record.getBorrowingDate() == null)
         throw new IllegalStateException("Empty borrowing date is found.");
+
       if (record.getReturningDate() == null)
         emptyReturningDates++;
     }
