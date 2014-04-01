@@ -24,7 +24,7 @@ import java.util.Date;
 
 public class LibraryRecord {
 
-  private long id;
+  private Long id;
 
   private Book book;
 
@@ -32,11 +32,11 @@ public class LibraryRecord {
 
   private Date returningDate;
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
