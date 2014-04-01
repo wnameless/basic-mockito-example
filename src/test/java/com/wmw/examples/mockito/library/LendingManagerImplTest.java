@@ -103,6 +103,13 @@ public class LendingManagerImplTest {
   }
 
   @Test(expected = IllegalStateException.class)
+  public void bookCanNotBeReturnedIfRecordIsNotUpdated() {
+    when(dao.findByBook(book)).thenReturn(Arrays.asList(oldRecord, newRecord));
+    when(dao.save(any(LibraryRecord.class))).thenReturn(false);
+    manager.returnBook(book);
+  }
+
+  @Test(expected = IllegalStateException.class)
   public void unborrowedBookCanNotBeReturned() {
     when(dao.findByBook(book)).thenReturn(Arrays.asList(oldRecord, newRecord));
     when(newRecord.getReturningDate()).thenReturn(new Date());
